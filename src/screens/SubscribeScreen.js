@@ -73,8 +73,8 @@ export default class SubscribeScreen extends Component {
 
             return <SubscribeCard key={i} source={newsColumns[i]}
                                   sourceSecond={newsColumns[j]}
-                                  click={()=>this.onSubscribePress(newsColumns[i].id)}
-                                  clickSecond={()=>this.onSubscribePress(newsColumns[j].id)}/>
+                                  click={()=>this.onSubscribePress(i)}
+                                  clickSecond={()=>this.onSubscribePress(j)}/>
         });
         return (
             <ScrollView style={styles.container}>
@@ -95,7 +95,7 @@ export default class SubscribeScreen extends Component {
             _iconColor: _iconColor,
         }
     }
-    onSubscribePress(subscribe, btnIsPress, _iconColor){  //点击订阅
+    onSubscribePress(subscribe){  //点击订阅
         var that = this;
         let url = 'http://localhost:3000/user_data';
 
@@ -111,10 +111,10 @@ export default class SubscribeScreen extends Component {
             }
             else {     //否则发送请求
 
-                this.setState = {   //设置按钮样式
-                    btnIsPress: btnIsPress,
-                    _iconColor: _iconColor,
-                }
+                // this.setState = {   //设置按钮样式
+                //     btnIsPress: btnIsPress,
+                //     _iconColor: _iconColor,
+                // }
 
                 let data = {
                     'user_id': curr_id,

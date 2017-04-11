@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 export default class SecondTabScreen extends Component {
-  static navigatorStyle: {
+  static navigatorStyle = {
     drawUnderTabBar: true,
     navBarBackgroundColor: '#4dbce9',
     navBarTextColor: '#ffff00',

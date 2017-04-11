@@ -9,7 +9,8 @@ import {
     Image,
     Dimensions,
     ScrollView,
-    AsyncStorage
+    AsyncStorage,
+    RefreshControl
 } from 'react-native';
 //引用组件
 import Slider from '../component/Slider';
@@ -46,8 +47,9 @@ export default class FirstTabScreen extends Component {
         // if you want to listen on navigator events, set this up
         this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
         this.state = {
-            source: null,
-            status: null
+            isRefreshing: false,
+            loaded: 10,
+            rowData: null
         }
     }
 
@@ -57,12 +59,12 @@ export default class FirstTabScreen extends Component {
         fetch('http://www.qdaily.com/homes/articlemore/1490225388.json')
             .then((response) => response.json())
             .then((responseJson) => {
-            that.setState({
-                source: responseJson.data.feeds,
+                that.setState({
+                    rowData: responseJson.data.feeds
+                });
+
+
             });
-
-
-        });
 
     }
 
@@ -76,7 +78,7 @@ export default class FirstTabScreen extends Component {
     }
 
     render() {
-        var news = this.state.source;
+        var news = this.state.rowData;
         var img_url = ['http://img.qdaily.com/article/banner/20170322013702HD2XZToMq5G7m3Qy.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
             'http://img.qdaily.com/article/banner/20170320000232OyrY3HL5T6RMWuSB.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
             'http://img.qdaily.com/article/banner/20170323095136PzYgOsRUaATmB4Co.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1'];
@@ -102,7 +104,7 @@ export default class FirstTabScreen extends Component {
         const rows = news.map((row, ii) => { //渲染首页
             var i = 2*ii;
             var j = 2*ii+1;
-            if (j > news.length) return;
+            if (j > this.state.loaded) return;
 
             return <NewsCard key={i} source={news[i]} sourceSecond={news[j]}
                              click={()=>this.onPushPress(news[i].post.id)}
@@ -110,13 +112,53 @@ export default class FirstTabScreen extends Component {
 
         });
         return (
-            <ScrollView style={styles.flexContainer}>
+            <ScrollView style={styles.flexContainer} refreshControl={
+                <RefreshControl
+                    refreshing={this.state.isRefreshing}
+                    onRefresh={this.onRefresh.bind(this)}
+                    tintColor='#A91503'
+                    title= {this.state.isRefreshing? '加载中...':'下拉刷新'}/>
+            }>
                 <Slider img_one={img_url[0]}
                         img_sec={img_url[1]}
                         img_third={img_url[2]}/>
                 {rows}
             </ScrollView>
         );
+    }
+
+    onRefresh() {               //下拉加载
+        this.setState({isRefreshing: true});
+        let url;
+        AsyncStorage.getItem('account_status', (error, result)=>{
+            var curr_status = result;
+            if(curr_status){
+                // console.log(curr_status);
+                url = "http://www.qdaily.com/special_columns/column_more/1487916735.json";
+//（subscribe_id是序号 i,j）如何获得用户ID和订阅的ID
+            }
+        });
+
+        fetch('http://www.qdaily.com/homes/articlemore/1490225388.json')
+            .then((response) => response.json())
+            .then((responseJson) => {
+                var news = responseJson.data.feeds;
+                if(this.state.loaded>news.length){
+                    this.setState({
+                       isRefreshing: false
+                    });
+                    return;
+                }
+                setTimeout(() => {
+                    var rowNewData = news.concat(this.state.rowData);
+                    this.setState({
+                        loaded: this.state.loaded + 6,
+                        isRefreshing: false,
+                        rowData: rowNewData,
+                    })
+                }, 2000);
+
+            });
     }
 
     onPushPress(pageID) {
