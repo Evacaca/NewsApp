@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     AlertIOS,
-    Image
+    Image,
 } from 'react-native';
 
 import {Container, Content, ListItem, Right} from 'native-base';
@@ -15,12 +15,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 export default class SideMenu extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             user_info: '登录'
         }
     }
+    componentDidMount(){
 
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -33,7 +34,7 @@ export default class SideMenu extends Component {
 
                         <ListItem onPress={ this.onModalPress.bind(this) }>
                             <Icon name='md-person' size={26} color={'#CF0E17'}/>
-                            <Text style={styles.button}>登录</Text>
+                            <Text style={styles.button}>{this.state.user_info}</Text>
                             <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
                         </ListItem>
                         <ListItem onPress={ this.onBackPress.bind(this) }>

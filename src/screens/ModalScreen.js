@@ -106,9 +106,7 @@ export default class ModalScreen extends Component {
     }
 
     onLoginIn(){
-        this.props.navigator.dismissModal({
-           passProps: {status: this.state.status}
-        });
+        this.props.navigator.dismissModal();
     }
     onPressCallback () {
 
@@ -129,9 +127,11 @@ export default class ModalScreen extends Component {
                     if(pwd == responseJson[i]["user_password"]){
                         //设置用户登录信息
                         let USERSTATUSINFO = {
+                            'account_email':responseJson[i].user_email,
                             'account_ID': responseJson[i].id,
                             'account_status': true
                         }
+                        // AsyncStorage.removeItem('USER_STATUS_INFO');
                         AsyncStorage.setItem('USER_STATUS_INFO', JSON.stringify(USERSTATUSINFO));
                         //登录成功，回到首页
 

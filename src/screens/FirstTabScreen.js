@@ -164,6 +164,7 @@ export default class FirstTabScreen extends Component {
                             }
                            // @TODO
                             if(subscribes.length % 2 != 0){    //每次同时渲染两个，所以需要控制偶数
+
                                 console.log(subscribes[subscribes.length-1]);
                                 columnNews.push(subscribeNews[subscribes.length-1]);
                             }

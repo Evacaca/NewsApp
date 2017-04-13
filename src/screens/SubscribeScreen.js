@@ -97,7 +97,6 @@ export default class SubscribeScreen extends Component {
     }
     onSubscribePress(subscribe){  //点击订阅
         var that = this;
-        // let url = 'http://localhost:3000/user_data';
 
         AsyncStorage.getItem('USER_STATUS_INFO', function (err, result) {
             var curr_id = JSON.parse(result).account_ID;
