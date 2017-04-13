@@ -7,6 +7,8 @@ import {
     StyleSheet,
     AlertIOS,
     Image,
+    AsyncStorage,
+    DeviceEventEmitter
 } from 'react-native';
 
 import {Container, Content, ListItem, Right} from 'native-base';
@@ -16,13 +18,47 @@ export default class SideMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user_info: '登录'
+            user_email: '登录',
+            user_status: false
         }
     }
     componentDidMount(){
-
+        console.log("组件渲染组件渲染")
+        this.user_info = DeviceEventEmitter.addListener('user_info', (user_info)=>{//监听通知事件以获取登录信息
+            console.log(user_info);
+            if(!user_info.status){
+                user_info.email = '登录';
+            }
+           this.setState({
+               user_email: user_info.email,
+               user_status: user_info.status
+           });
+        });
+        // AsyncStorage.getItem("USER_STATUS_INFO", (error, result) => {
+        //     var user_info = JSON.parse(result).account_email;
+        //     if(!user_info){
+        //         user_info = '登录';
+        //     }
+        //     this.setState({
+        //         user_info: user_info
+        //     })
+        // });
+    }
+    componentWillUnmount(){         //销毁
+        console.log("组件销毁组件销毁");
+        this.user_info.remove();
     }
     render() {
+        var logItem = null;
+        if(this.state.user_status){
+            logItem = (
+                <ListItem onPress={ this.onLogout.bind(this) }>
+                    <Icon name='md-exit' size={26} color={'#CF0E17'}/>
+                    <Text style={styles.button}>退出</Text>
+                    <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
+                </ListItem>
+            );
+        }
         return (
             <View style={styles.container}>
                 <View style={styles.viewImage}>
@@ -31,10 +67,9 @@ export default class SideMenu extends Component {
 
                 <Container>
                     <Content>
-
                         <ListItem onPress={ this.onModalPress.bind(this) }>
                             <Icon name='md-person' size={26} color={'#CF0E17'}/>
-                            <Text style={styles.button}>{this.state.user_info}</Text>
+                            <Text style={styles.button}>{this.state.user_email}</Text>
                             <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
                         </ListItem>
                         <ListItem onPress={ this.onBackPress.bind(this) }>
@@ -47,30 +82,31 @@ export default class SideMenu extends Component {
                             <Text style={styles.button}>栏目中心</Text>
                             <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
                         </ListItem>
-                        <ListItem onPress={ this.onSubscribePress.bind(this) }>
-                            <Icon name='md-exit' size={26} color={'#CF0E17'}/>
-                            <Text style={styles.button}>退出</Text>
-                            <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
-                        </ListItem>
+                        {logItem}
                     </Content>
                 </Container>
             </View>
         );
     }
 
-    onModalPress() {
-        this._toggleDrawer();
-        this.props.navigator.showModal({
-            title: "登录",
-            screen: "example.ModalScreen"
-        });
+    onModalPress() {        //进入登录页面
+        if(this.state.user_status){  //如果已经登录，则不再登录
+            return;
+        }
+        else {
+            this._toggleDrawer();
+            this.props.navigator.showModal({
+                title: "登录",
+                screen: "example.ModalScreen"
+            });
+        }
     }
 
     onBackPress() {
         this._toggleDrawer();
     }
 
-    _toggleDrawer() {
+    _toggleDrawer() {       //关闭菜单栏
         this.props.navigator.toggleDrawer({
             to: 'closed',
             side: 'left',
@@ -78,12 +114,21 @@ export default class SideMenu extends Component {
         });
     }
 
-    onSubscribePress() {
+    onSubscribePress() { //进入订阅页面
         this._toggleDrawer();
         this.props.navigator.showModal({
             title: "订阅",
             screen: "example.SubScribeScreen"
         });
+    }
+    onLogout(){     //退出登录
+        if(this.state.user_status){
+            AsyncStorage.removeItem('USER_STATUS_INFO');
+            this.setState({
+                user_email: '登录',
+                user_status: false
+            })
+        }
     }
 }
 

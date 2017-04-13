@@ -10,7 +10,8 @@ import {
     Dimensions,
     ScrollView,
     AsyncStorage,
-    RefreshControl
+    RefreshControl,
+    DeviceEventEmitter
 } from 'react-native';
 //引用组件
 import Slider from '../component/Slider';
@@ -72,10 +73,22 @@ export default class FirstTabScreen extends Component {
 
     onNavigatorEvent(event) {
         if (event.id === 'menu') {
-            this.props.navigator.toggleDrawer({
-                side: 'left',
-                animated: true
+            AsyncStorage.getItem("USER_STATUS_INFO", (error, result) => {//获取登录信息
+                var email = '登录';
+                var status = false;
+
+                if(result){
+                    email = JSON.parse(result).account_email;
+                    status = JSON.parse(result).account_status;
+                }
+                DeviceEventEmitter.emit('user_info', {'email': email, 'status': status});  //传播通知登录信息
+
+                this.props.navigator.toggleDrawer({  //打开侧边菜单栏
+                    side: 'left',
+                    animated: true,
+                });
             });
+
         }
     }
 
