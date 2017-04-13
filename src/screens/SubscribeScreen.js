@@ -97,10 +97,11 @@ export default class SubscribeScreen extends Component {
     }
     onSubscribePress(subscribe){  //点击订阅
         var that = this;
-        let url = 'http://localhost:3000/user_data';
+        // let url = 'http://localhost:3000/user_data';
 
-        AsyncStorage.getItem('account_ID', function (err, result) {
-            var curr_id = result;
+        AsyncStorage.getItem('USER_STATUS_INFO', function (err, result) {
+            var curr_id = JSON.parse(result).account_ID;
+            // console.log(curr_id);
 
             if(!curr_id){  //如果未登录，则进入登录界面
                 that.props.navigator.pop();
@@ -109,20 +110,36 @@ export default class SubscribeScreen extends Component {
                     screen: "example.ModalScreen"
                 });
             }
-            else {     //否则发送请求
+            else {
 
-                // this.setState = {   //设置按钮样式
-                //     btnIsPress: btnIsPress,
-                //     _iconColor: _iconColor,
-                // }
-
-                let data = {
+                let USERDATA = {
                     'user_id': curr_id,
-                    'subscribe_id': subscribe,
+                    'subscribe_id': [subscribe],
                 };
-                NetUil.postJson(url, data, (responseJson) => {
-                    console.log(responseJson);
+
+                // AsyncStorage.removeItem('USER_DATA');
+
+                //存储当前用户的订阅ID
+                AsyncStorage.getItem('USER_DATA', (error, result) => {
+                    if(!result){
+                        AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA));
+                        AsyncStorage.getItem('USER_DATA', (error, result) => {
+                            console.log(result);
+                        });
+                    }
+                    else {
+                        var arr_id = JSON.parse(result).subscribe_id;
+                        arr_id.push(subscribe);
+                        USERDATA.subscribe_id = arr_id;
+
+                        AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA), () => {
+                            AsyncStorage.getItem('USER_DATA', (error, result) => {
+                                console.log(result);
+                            });
+                        });
+                    }
                 });
+
             }
         });
 

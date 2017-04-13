@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Image, Dimensions, Text,TouchableOpacity } from 'react-native';
-import { Container, Content, Card, CardItem, Button, Icon} from 'native-base';
+import { Container, Content, Card, CardItem, Button} from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
-
+import Icon from 'react-native-vector-icons/Ionicons';
 export default class NewsCard extends Component {
     constructor(props){
         super(props);
     }
     render() {
         return (
-            <Grid>
+            <Grid style={{paddingLeft:6, paddingRight: 6, paddingTop:6}}>
                 <Row height={200}>
-                    <Col>
+                    <Col style={{marginRight:6}}>
                         <Container>
                             <Content>
                                 <Card>
@@ -23,15 +23,17 @@ export default class NewsCard extends Component {
                                     </CardItem>
                                     <CardItem style={{
                                         justifyContent: 'center',
+                                        width: '100%',
                                         position: 'absolute',
-                                        top:88,
-                                        backgroundColor: 'transparent'}}>
-                                        <Button transparent>
-                                            <Icon style={{fontSize:14}} active name="thumbs-up" />
+                                        top:110,
+                                        padding:0,
+                                        backgroundColor: 'rgba(159,159,159,0.6)'}}>
+                                        <Button transparent small>
+                                            <Icon style={{fontSize:16, color: '#FFFF'}} active name="ios-thumbs-up" />
                                             <Text style={styles.text}>{this.props.source.post.praise_count}</Text>
                                         </Button>
-                                        <Button transparent>
-                                            <Icon style={{fontSize:14}} active name="chatbubbles" />
+                                        <Button transparent small>
+                                            <Icon style={{fontSize:16, color: '#FFFF'}} name="ios-chatbubbles" />
                                             <Text style={styles.text}>{this.props.source.post.comment_count}</Text>
                                         </Button>
                                     </CardItem>
@@ -51,15 +53,17 @@ export default class NewsCard extends Component {
                                     </CardItem>
                                     <CardItem style={{
                                         justifyContent: 'center',
+                                        width: '100%',
                                         position: 'absolute',
-                                        top:88,
-                                        backgroundColor: 'transparent'}}>
-                                        <Button transparent>
-                                            <Icon style={{fontSize:14}} active name="thumbs-up" />
+                                        top:110,
+                                        padding:0,
+                                        backgroundColor: 'rgba(159,159,159,0.6)'}}>
+                                        <Button transparent small>
+                                            <Icon style={{fontSize:16, color: '#FFFF'}} name="ios-thumbs-up" />
                                             <Text style={styles.text}>{this.props.sourceSecond.post.praise_count}</Text>
                                         </Button>
-                                        <Button transparent>
-                                            <Icon style={{fontSize:14}} active name="chatbubbles" />
+                                        <Button transparent small>
+                                            <Icon style={{fontSize:16, color: '#FFFF'}} name="ios-chatbubbles" />
                                             <Text style={styles.text}>{this.props.sourceSecond.post.comment_count}</Text>
                                         </Button>
                                     </CardItem>
@@ -87,7 +91,7 @@ const styles = StyleSheet.create({
         lineHeight: 14
     },
     text: {
-        fontSize: 12,
-        color: 'rgb(252, 86, 43)',
+        fontSize: 11,
+        color: '#FFFF',
     }
 })

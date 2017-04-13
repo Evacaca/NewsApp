@@ -49,7 +49,9 @@ export default class FirstTabScreen extends Component {
         this.state = {
             isRefreshing: false,
             loaded: 10,
-            rowData: null
+            rowData: null,
+            columnData: null,
+            status: false
         }
     }
 
@@ -79,6 +81,7 @@ export default class FirstTabScreen extends Component {
 
     render() {
         var news = this.state.rowData;
+        var columnNews = this.state.columnData;
         var img_url = ['http://img.qdaily.com/article/banner/20170322013702HD2XZToMq5G7m3Qy.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
             'http://img.qdaily.com/article/banner/20170320000232OyrY3HL5T6RMWuSB.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
             'http://img.qdaily.com/article/banner/20170323095136PzYgOsRUaATmB4Co.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1'];
@@ -87,7 +90,7 @@ export default class FirstTabScreen extends Component {
             return this.renderLoadingView();
         }
 
-        return this.renderNews(img_url,news);
+        return this.renderNews(img_url, news, columnNews, this.state.status);
     }
 
     renderLoadingView() { //加载数据
@@ -100,7 +103,7 @@ export default class FirstTabScreen extends Component {
         );
     }
 
-    renderNews(img_url, news) {
+    renderNews(img_url, news, columnNews, status) {
         const rows = news.map((row, ii) => { //渲染首页
             var i = 2*ii;
             var j = 2*ii+1;
@@ -111,6 +114,16 @@ export default class FirstTabScreen extends Component {
                              clickSecond={()=>this.onPushPress(news[j].post.id)}/>
 
         });
+        if(status) {
+            var columnRows = columnNews.map((row, ii) => {
+                var i = 2 * ii;
+                var j = 2 * ii + 1;
+
+                if (j > columnNews.length) return;
+                return <ColumnCard key={i} source={columnNews[i]}
+                                   sourceSecond={columnNews[j]}/>
+            });
+        }
         return (
             <ScrollView style={styles.flexContainer} refreshControl={
                 <RefreshControl
@@ -123,6 +136,7 @@ export default class FirstTabScreen extends Component {
                         img_sec={img_url[1]}
                         img_third={img_url[2]}/>
                 {rows}
+                {columnRows}
             </ScrollView>
         );
     }
@@ -130,12 +144,35 @@ export default class FirstTabScreen extends Component {
     onRefresh() {               //下拉加载
         this.setState({isRefreshing: true});
         let url;
-        AsyncStorage.getItem('account_status', (error, result)=>{
-            var curr_status = result;
+
+        AsyncStorage.getItem('USER_STATUS_INFO', (error, result) => {
+            var curr_status = JSON.parse(result).account_status;
+
             if(curr_status){
                 // console.log(curr_status);
                 url = "http://www.qdaily.com/special_columns/column_more/1487916735.json";
-//（subscribe_id是序号 i,j）如何获得用户ID和订阅的ID
+                AsyncStorage.getItem('USER_DATA', (error, result) => {  //获取用户的订阅版块
+                   var subscribes = JSON.parse(result).subscribe_id;
+
+                   fetch(url).then((response) => response.json())
+                       .then((responseJson) => {
+                            var subscribeNews = responseJson.data.columns;
+                            var columnNews = [];
+                            for(var i in subscribes){
+                                console.log(subscribeNews[subscribes[i]]);
+                                columnNews.push(subscribeNews[subscribes[i]]);
+                            }
+                           // @TODO
+                            if(subscribes.length % 2 != 0){    //每次同时渲染两个，所以需要控制偶数
+                                console.log(subscribes[subscribes.length-1]);
+                                columnNews.push(subscribeNews[subscribes.length-1]);
+                            }
+                            this.setState({
+                                status: true,
+                                columnData: columnNews
+                            });
+                       })
+                });
             }
         });
 

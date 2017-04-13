@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Image, Dimensions, Text} from 'react-native';
-import { Container, Content, Card, CardItem, Button, Icon} from 'native-base';
+import { Container, Content, Card, CardItem, Button} from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 const {width} = Dimensions.get('window');
@@ -9,7 +10,7 @@ export default class SubscribeCard extends Component {
     constructor(props){
         super(props);
         this.state = {
-            _iconColor: '#A91503',
+            _iconColor: '#000',
             btnState: 'true',
         }
     }
@@ -39,12 +40,12 @@ export default class SubscribeCard extends Component {
                                         justifyContent: 'space-around',
                                         position: 'absolute',
                                         width: width/2-20,
-                                        top:100,
+                                        top:30,
                                         left: 0,
                                         backgroundColor: 'transparent',
                                         }}>
                                         <Button transparent onPress={this.props.click}>
-                                            <Icon style={{fontSize:36, color: `${this.state._iconColor}`}} name="paw" />
+                                            <Icon style={{fontSize:44, color: '#D8001B'}} name="ios-add-circle-outline" />
                                         </Button>
                                     </CardItem>
                                 </Card>
@@ -73,12 +74,12 @@ export default class SubscribeCard extends Component {
                                         justifyContent: 'space-around',
                                         position: 'absolute',
                                         width: width/2-20,
-                                        top:100,
+                                        top:30,
                                         left: 0,
                                         backgroundColor: 'transparent',
                                         zIndex:2}}>
                                         <Button transparent onPress={this.props.clickSecond}>
-                                            <Icon style={{fontSize:36, color: `${this.state._iconColor}`}} name="paw" />
+                                            <Icon style={{fontSize:44, color: '#D8001B'}} name="ios-add-circle-outline" />
                                         </Button>
                                     </CardItem>
                                 </Card>
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: 100+'%',
         height: 140,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
         top: 0,
         left: 0,
         zIndex: 1,

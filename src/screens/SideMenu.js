@@ -9,11 +9,16 @@ import {
     Image
 } from 'react-native';
 
-import {Icon, Container, Content, ListItem, Right} from 'native-base';
+import {Container, Content, ListItem, Right} from 'native-base';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class SideMenu extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            user_info: '登录'
+        }
     }
 
     render() {
@@ -27,19 +32,24 @@ export default class SideMenu extends Component {
                     <Content>
 
                         <ListItem onPress={ this.onModalPress.bind(this) }>
-                            <Icon name='ios-person'/>
+                            <Icon name='md-person' size={26} color={'#CF0E17'}/>
                             <Text style={styles.button}>登录</Text>
-                            <Right><Icon name="arrow-forward" /></Right>
+                            <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
                         </ListItem>
                         <ListItem onPress={ this.onBackPress.bind(this) }>
-                            <Icon name='bookmarks'/>
+                            <Icon name='md-home' size={26} color={'#CF0E17'}/>
                             <Text style={styles.button}>首页</Text>
-                            <Right><Icon name="arrow-forward" /></Right>
+                            <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
                         </ListItem>
                         <ListItem onPress={ this.onSubscribePress.bind(this) }>
-                            <Icon name='flame'/>
+                            <Icon name='md-cube' size={22} color={'#CF0E17'}/>
                             <Text style={styles.button}>栏目中心</Text>
-                            <Right><Icon name="arrow-forward" /></Right>
+                            <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
+                        </ListItem>
+                        <ListItem onPress={ this.onSubscribePress.bind(this) }>
+                            <Icon name='md-exit' size={26} color={'#CF0E17'}/>
+                            <Text style={styles.button}>退出</Text>
+                            <Right><Icon name="ios-arrow-round-forward" color={'#8D7D7D'} size={24}/></Right>
                         </ListItem>
                     </Content>
                 </Container>
@@ -89,8 +99,8 @@ const styles = StyleSheet.create({
     button: {
         textAlign: 'center',
         fontSize: 16,
-        color: 'rgb(252,86,43)',
-        marginLeft: 16,
+        color: '#8D7D7D',
+        marginLeft: 14,
     },
     image: {
         width: 128,

@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Image, Dimensions, Text, AsyncStorage } from 'react-native';
-import { Container, Content, Card, CardItem, Button, Icon} from 'native-base';
+import { Container, Content, Card, CardItem} from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
 
-import Storage from '../util/Storage';
-import NetUil from '../util/NetUtil';
 
 const {width} = Dimensions.get('window');
 export default class ColumnCard extends Component {

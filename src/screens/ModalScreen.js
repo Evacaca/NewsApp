@@ -6,7 +6,8 @@ import {
     View,
     ScrollView,
     TouchableOpacity,
-    StyleSheet
+    StyleSheet,
+    AsyncStorage
 } from 'react-native';
 
 import {Container, Content, Form, Item, Input, Button} from 'native-base';
@@ -126,10 +127,17 @@ export default class ModalScreen extends Component {
             for(var i in responseJson){
                 if(email == responseJson[i]["user_email"]){ //验证账号密码的时候，感觉自己像个白痴
                     if(pwd == responseJson[i]["user_password"]){
-                        //设置用户信息
-                        Storage.setAsCache('account_ID', responseJson[i].id);
-                        Storage.setAsCache('account_status', true);
+                        //设置用户登录信息
+                        let USERSTATUSINFO = {
+                            'account_ID': responseJson[i].id,
+                            'account_status': true
+                        }
+                        AsyncStorage.setItem('USER_STATUS_INFO', JSON.stringify(USERSTATUSINFO));
                         //登录成功，回到首页
+
+                        // AsyncStorage.getItem('USER_STATUS_INFO', (error, result) => {
+                        //     console.log(result);
+                        // })
                         this.onLoginIn();
                         return;
                     }
