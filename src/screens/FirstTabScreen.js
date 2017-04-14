@@ -52,7 +52,8 @@ export default class FirstTabScreen extends Component {
             loaded: 10,
             rowData: null,
             columnData: null,
-            status: false
+            status: false,
+            subscribes: []
         }
     }
 
@@ -65,13 +66,29 @@ export default class FirstTabScreen extends Component {
                 that.setState({
                     rowData: responseJson.data.feeds
                 });
-
-
             });
 
+       // that.subscribes =  DeviceEventEmitter.addListener('user_subscribe', (user_subscribe) => {
+       //      that.setState({subscribes: user_subscribe.subscribes});
+       //      console.log(this.state.subscribes);
+       //  })
     }
-
+    // componentWillUnmount(){
+    //     this.subscribes.remove();
+    // }
     onNavigatorEvent(event) {
+
+        if (event.type == 'DeepLink') { //handle deep link
+            const parts = event.link.split('/');
+            if (parts[0] == 'SideMenu') {
+                this.props.navigator.resetTo({
+                    title: "ALL",
+                    screen: parts[1],
+                    animated: true
+                });
+            }
+        }
+
         if (event.id === 'menu') {
             AsyncStorage.getItem("USER_STATUS_INFO", (error, result) => {//获取登录信息
                 var email = '登录';
@@ -88,7 +105,6 @@ export default class FirstTabScreen extends Component {
                     animated: true,
                 });
             });
-
         }
     }
 
@@ -106,7 +122,7 @@ export default class FirstTabScreen extends Component {
         return this.renderNews(img_url, news, columnNews, this.state.status);
     }
 
-    renderLoadingView() { //加载数据
+    renderLoadingView() {   //加载数据
         return (
             <View style={styles.flexContainer}>
                 <Text>
@@ -134,7 +150,9 @@ export default class FirstTabScreen extends Component {
 
                 if (j > columnNews.length) return;
                 return <ColumnCard key={i} source={columnNews[i]}
-                                   sourceSecond={columnNews[j]}/>
+                                   sourceSecond={columnNews[j]}
+                                   clickSecond={() => this.onPushContent(columnNews[j].name, columnNews[j].id)}
+                                   click={() => this.onPushContent(columnNews[i].name, columnNews[i].id)}/>
             });
         }
         return (
@@ -148,8 +166,8 @@ export default class FirstTabScreen extends Component {
                 <Slider img_one={img_url[0]}
                         img_sec={img_url[1]}
                         img_third={img_url[2]}/>
-                {rows}
                 {columnRows}
+                {rows}
             </ScrollView>
         );
     }
@@ -218,6 +236,14 @@ export default class FirstTabScreen extends Component {
             screen: "example.PushedScreen",
             passProps: {id: pageID}
         });
+    }
+
+    onPushContent(navTitle, subscribeID){
+        this.props.navigator.push({
+            title: `${navTitle}`,
+            screen: 'example.SubscribeContentScreen',
+            passProps: {id: subscribeID}
+        })
     }
 }
 //定义样式

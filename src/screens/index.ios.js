@@ -10,6 +10,7 @@ import NotificationScreen from './NotificationScreen';
 import LightBoxScreen from './LightBoxScreen';
 import SubscribeScreen from './SubscribeScreen';
 import RegisterScreen from './RegisterScreen';
+import SubscribeContentScreen from './SubscribeContentScreen';
 
 // register all screens of the app (including internal ones)
 export function registerScreens() {
@@ -23,4 +24,5 @@ export function registerScreens() {
   Navigation.registerComponent('example.LightBoxScreen', () => LightBoxScreen);
   Navigation.registerComponent('example.SubScribeScreen', () => SubscribeScreen);
   Navigation.registerComponent('example.RegisterScreen', () => RegisterScreen);
+    Navigation.registerComponent('example.SubscribeContentScreen', () => SubscribeContentScreen);
 }

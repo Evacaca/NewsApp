@@ -5,12 +5,12 @@ import {
     ScrollView,
     TouchableOpacity,
     StyleSheet,
-    AsyncStorage
+    AsyncStorage,
+    DeviceEventEmitter
 } from 'react-native';
 
 import { Image } from 'react-native';
 import SubscribeCard from '../component/SubscribeCard';
-import NetUil from '../util/NetUtil';
 
 export default class SubscribeScreen extends Component {
     static navigatorButtons = {
@@ -27,20 +27,23 @@ export default class SubscribeScreen extends Component {
     };
     constructor(props) {
         super(props);
-        // if you want to listen on navigator events, set this up
         this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
+
         this.state = {
             source: null,
+            subscribes: [],
+            status: false,
             btnIsPress: true,
             _iconColor: '#A91503',
         }
     }
 
     componentDidMount() {
+        var that = this;
         fetch('http://www.qdaily.com/special_columns/column_more/1487916735.json').
         then((response) => response.json()).
         then((responseJson) => {
-            this.setState({
+            that.setState({
                 source: responseJson.data.columns
             });
         });
@@ -85,6 +88,8 @@ export default class SubscribeScreen extends Component {
 
     onNavigatorEvent(event) {
         if (event.id == 'close') {
+            DeviceEventEmitter.emit('user_subscribe', {'subscribes': this.state.subscribes});//传播通知订阅信息
+            console.log('test7: '+ this.state.subscribes);
             this.props.navigator.dismissModal();
             this.props.navigator.pop();
         }
@@ -95,14 +100,14 @@ export default class SubscribeScreen extends Component {
             _iconColor: _iconColor,
         }
     }
-    onSubscribePress(subscribe){  //点击订阅
+    onSubscribePress(subscribe){                                //点击订阅
         var that = this;
 
         AsyncStorage.getItem('USER_STATUS_INFO', function (err, result) {
             var curr_id = JSON.parse(result).account_ID;
             // console.log(curr_id);
 
-            if(!curr_id){  //如果未登录，则进入登录界面
+            if(!that.state.status){                                       //如果未登录，则进入登录界面
                 that.props.navigator.pop();
                 that.props.navigator.showModal({
                     title: "登录",
@@ -119,21 +124,25 @@ export default class SubscribeScreen extends Component {
                 // AsyncStorage.removeItem('USER_DATA');
 
                 //存储当前用户的订阅ID
-                AsyncStorage.getItem('USER_DATA', (error, result) => {
+                AsyncStorage.getItem('USER_DATA', (error, result) => {//当前用户还未有订阅
                     if(!result){
                         AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA));
                         AsyncStorage.getItem('USER_DATA', (error, result) => {
-                            console.log(result);
+                            console.log("test3: "+result);
                         });
                     }
-                    else {
+                    else {                                            //当前用户已经有订阅版块
                         var arr_id = JSON.parse(result).subscribe_id;
                         arr_id.push(subscribe);
                         USERDATA.subscribe_id = arr_id;
 
+                        that.setState({                                //设置用户订阅版块列表
+                            subscribes: arr_id
+                        });
+
                         AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA), () => {
                             AsyncStorage.getItem('USER_DATA', (error, result) => {
-                                console.log(result);
+                                console.log("test4: "+result);
                             });
                         });
                     }

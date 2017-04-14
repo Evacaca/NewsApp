@@ -34,15 +34,6 @@ export default class SideMenu extends Component {
                user_status: user_info.status
            });
         });
-        // AsyncStorage.getItem("USER_STATUS_INFO", (error, result) => {
-        //     var user_info = JSON.parse(result).account_email;
-        //     if(!user_info){
-        //         user_info = '登录';
-        //     }
-        //     this.setState({
-        //         user_info: user_info
-        //     })
-        // });
     }
     componentWillUnmount(){         //销毁
         console.log("组件销毁组件销毁");
@@ -122,13 +113,28 @@ export default class SideMenu extends Component {
         });
     }
     onLogout(){     //退出登录
+        this._toggleDrawer();
+        this.props.navigator.handleDeepLink({
+            link: "SideMenu/example.FirstTabScreen",
+        });
+
+        // DeviceEventEmitter.emit('user_subscribe', ({ 'subscribes': []}));
+
         if(this.state.user_status){
-            AsyncStorage.removeItem('USER_STATUS_INFO');
+            let USERSTATUSINFO = {
+                account_email: '',
+                account_status: false,
+                account_ID: ''
+            }
+            AsyncStorage.setItem('USER_STATUS_INFO', JSON.stringify(USERSTATUSINFO));
             this.setState({
                 user_email: '登录',
                 user_status: false
-            })
+            });
+
         }
+        // this.props.navigator.pop();
+
     }
 }
 

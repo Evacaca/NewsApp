@@ -7,11 +7,11 @@ import {
     ScrollView,
     TouchableOpacity,
     StyleSheet,
-    AsyncStorage
+    AsyncStorage,
+    DeviceEventEmitter
 } from 'react-native';
 
 import {Container, Content, Form, Item, Input, Button} from 'native-base';
-import Storage from '../util/Storage';
 
 const {width} = Dimensions.get('window');
 
@@ -134,7 +134,7 @@ export default class ModalScreen extends Component {
                         // AsyncStorage.removeItem('USER_STATUS_INFO');
                         AsyncStorage.setItem('USER_STATUS_INFO', JSON.stringify(USERSTATUSINFO));
                         //登录成功，回到首页
-
+                        DeviceEventEmitter.emit('user_status',{'status': true});
                         // AsyncStorage.getItem('USER_STATUS_INFO', (error, result) => {
                         //     console.log(result);
                         // })

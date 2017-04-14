@@ -8,13 +8,13 @@ const {width} = Dimensions.get('window');
 export default class ColumnCard extends Component {
     render() {
         return (
-            <Grid>
-                <Row height={200}>
-                    <Col marginRight={10}>
+            <Grid style={{paddingLeft:6, paddingRight: 6, marginBottom:-6, paddingTop: 6}}>
+                <Row height={190}>
+                    <Col style={{marginRight:6}}>
                         <Container>
                             <Content>
                                 <Card>
-                                    <CardItem cardBody>
+                                    <CardItem cardBody onPress={this.props.click}>
                                         <View style={styles.mask}></View>
                                         <Image style={styles.image} source={{url: this.props.source.image}}></Image>
                                     </CardItem>
@@ -36,7 +36,7 @@ export default class ColumnCard extends Component {
                         <Container>
                             <Content>
                                 <Card>
-                                    <CardItem cardBody>
+                                    <CardItem cardBody onPress={this.props.clickSecond}>
                                         <View style={styles.mask}></View>
                                         <Image style={styles.image} source={{url: this.props.sourceSecond.image}}></Image>
                                     </CardItem>
