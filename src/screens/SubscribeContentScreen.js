@@ -16,6 +16,21 @@ import NewsCard from '../component/NewsCard';
 
 let url = "http://www.qdaily.com/special_columns/show_more/";
 let subscribe_id = {
+    '29': '1488795859',
+    '22': '1486187906',
+    '13': '1487575845',
+    '8': '1487559576',
+    '16': '1465808623',
+    '38': '1488238303',
+    '14': '1468714602',
+    '15': '1466233377',
+    '9': '1468710118',
+    '33': '1483570800',
+    '17': '1446278400',
+    '49': '1451829630',
+    '44': '1486984036',
+    '31': '1487586035',
+    '30': '1480410436',
     '12': '1452188482',
     '11': '1454778006',
     '18': '1453446000',
@@ -137,7 +152,7 @@ console.log(subscribe_url);
     onPushPress(pageID) {
         this.props.navigator.push({
             title: "新闻详情",
-            screen: "example.PushedScreen",
+            screen: "example.NewsDetailScreen",
             passProps: {id: pageID}
         });
     }

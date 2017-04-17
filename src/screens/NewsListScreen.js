@@ -193,34 +193,40 @@ export default class FirstTabScreen extends Component {
         let url;
 
         AsyncStorage.getItem('USER_STATUS_INFO', (error, result) => {
-            var curr_status = JSON.parse(result).account_status;
+            var resultJson = JSON.parse(result);
+            if(!resultJson){
+                return;
+            }
+            else {
+                var curr_status = resultJson.account_status;
 
-            if(curr_status){
-                // console.log(curr_status);
-                url = "http://www.qdaily.com/special_columns/column_more/1487916735.json";
-                AsyncStorage.getItem('USER_DATA', (error, result) => {  //获取用户的订阅版块
-                   var subscribes = JSON.parse(result).subscribe_id;
+                if (curr_status) {
+                    // console.log(curr_status);
+                    url = "http://www.qdaily.com/special_columns/column_more/1487916735.json";
+                    AsyncStorage.getItem('USER_DATA', (error, result) => {  //获取用户的订阅版块
+                        var subscribes = JSON.parse(result).subscribe_id;
 
-                   fetch(url).then((response) => response.json())
-                       .then((responseJson) => {
-                            var subscribeNews = responseJson.data.columns;
-                            var columnNews = [];
-                            for(var i in subscribes){
-                                console.log(subscribeNews[subscribes[i]]);
-                                columnNews.push(subscribeNews[subscribes[i]]);
-                            }
-                           // @TODO
-                            if(subscribes.length % 2 != 0){    //每次同时渲染两个，所以需要控制偶数
+                        fetch(url).then((response) => response.json())
+                            .then((responseJson) => {
+                                var subscribeNews = responseJson.data.columns;
+                                var columnNews = [];
+                                for (var i in subscribes) {
+                                    console.log(subscribeNews[subscribes[i]]);
+                                    columnNews.push(subscribeNews[subscribes[i]]);
+                                }
+                                // @TODO
+                                if (subscribes.length % 2 != 0) {    //每次同时渲染两个，所以需要控制偶数
 
-                                console.log(subscribes[subscribes.length-1]);
-                                columnNews.push(subscribeNews[subscribes.length-1]);
-                            }
-                            this.setState({
-                                status: true,
-                                columnData: columnNews
-                            });
-                       })
-                });
+                                    console.log(subscribes[subscribes.length - 1]);
+                                    columnNews.push(subscribeNews[subscribes.length - 1]);
+                                }
+                                this.setState({
+                                    status: true,
+                                    columnData: columnNews
+                                });
+                            })
+                    });
+                }
             }
         });
 
@@ -244,6 +250,7 @@ export default class FirstTabScreen extends Component {
                 }, 2000);
 
             });
+
     }
 
     onPushPress(pageID) {

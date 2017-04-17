@@ -103,11 +103,8 @@ export default class SubscribeScreen extends Component {
         var that = this;
 
         AsyncStorage.getItem('USER_STATUS_INFO', function (err, result) {
-            var curr_id = JSON.parse(result).account_ID;
-            var status = JSON.parse(result).account_status;
-            console.log(curr_id);
-
-            if(!status){                                       //如果未登录，则进入登录界面
+            var resultJson = JSON.parse(result);
+            if(!resultJson){                                   //未登录，进入登录界面
                 that.props.navigator.pop();
                 that.props.navigator.showModal({
                     title: "登录",
@@ -115,6 +112,8 @@ export default class SubscribeScreen extends Component {
                 });
             }
             else {
+                var curr_id = JSON.parse(result).account_ID;
+                console.log(curr_id);
 
                 let USERDATA = {
                     'user_id': curr_id,
@@ -125,10 +124,10 @@ export default class SubscribeScreen extends Component {
 
                 //存储当前用户的订阅ID
                 AsyncStorage.getItem('USER_DATA', (error, result) => {//当前用户还未有订阅
-                    if(!result){
+                    if (!result) {
                         AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA));
                         AsyncStorage.getItem('USER_DATA', (error, result) => {
-                            console.log("test3: "+result);
+                            console.log("test3: " + result);
                         });
                     }
                     else {                                            //当前用户已经有订阅版块
@@ -142,7 +141,7 @@ export default class SubscribeScreen extends Component {
 
                         AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA), () => {
                             AsyncStorage.getItem('USER_DATA', (error, result) => {
-                                console.log("test4: "+result);
+                                console.log("test4: " + result);
                             });
                         });
                     }
