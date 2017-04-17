@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import NewsDetail from '../component/NewsDetail';
 
-export default class PushedScreen extends Component {
+export default class NewsDetailScreen extends Component {
   static navigatorStyle = {
     drawUnderTabBar: true
   };

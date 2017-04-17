@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 
 const {width, height} = Dimensions.get('window');
-const url = 'http://m.qdaily.com/mobile/articles/39056.html' ;
 
 export default class NewsDetail extends Component{
     constructor(props){

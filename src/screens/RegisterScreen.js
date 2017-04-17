@@ -115,24 +115,19 @@ export default class ModalScreen extends Component {
             sec_pwd = this.state.confirm_pwd;
         var email_filter=/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if(email=='' || pwd=='') {
-            alert("邮箱和密码输入不能为空");
-            return;
+            return this.onLightBoxPress("邮箱和密码输入不能为空");
         }
         if(!email_filter.test(email)) {
-            alert("邮箱格式输入错误！");
-            return;
+            return this.onLightBoxPress("邮箱格式输入错误！");
         }
-        if(pwd.length>12 || pwd.length <6){
-            alert("密码长度应为6-12位");
-            return;
+        if(pwd.length>6 || pwd.length <4){
+            return this.onLightBoxPress("密码长度应为4-6位");
         }
-        if(!pwd.match(/^[0-9A-Za-z]{6,12}$/)){
-            alert("密码格式错误");
-            return;
+        if(!pwd.match(/^[0-9A-Za-z]{4,6}$/)){
+            return this.onLightBoxPress("密码格式错误，应由数字或字母构成");
         }
         if(sec_pwd != pwd){
-            alert("密码不一致");
-            return;
+            return this.onLightBoxPress("密码不一致");
         }
 
         else{
@@ -150,6 +145,17 @@ export default class ModalScreen extends Component {
             // alert(responseJson.user_email);
         });
         this.props.navigator.dismissModal();
+    }
+    onLightBoxPress(message) {
+        this.props.navigator.showLightBox({
+            screen: "example.LightBoxScreen",
+            style: {
+                backgroundBlur: "dark"
+            },
+            passProps: {
+                greeting: message
+            },
+        });
     }
 }
 

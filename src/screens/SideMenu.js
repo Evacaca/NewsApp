@@ -88,7 +88,7 @@ export default class SideMenu extends Component {
             this._toggleDrawer();
             this.props.navigator.showModal({
                 title: "登录",
-                screen: "example.ModalScreen"
+                screen: "example.LoginScreen"
             });
         }
     }
@@ -115,7 +115,7 @@ export default class SideMenu extends Component {
     onLogout(){     //退出登录
         this._toggleDrawer();
         this.props.navigator.handleDeepLink({
-            link: "SideMenu/example.FirstTabScreen",
+            link: "SideMenu/example.NewsListScreen",
         });
 
         // DeviceEventEmitter.emit('user_subscribe', ({ 'subscribes': []}));

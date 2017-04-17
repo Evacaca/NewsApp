@@ -1,11 +1,11 @@
 import {Navigation} from 'react-native-navigation';
 
-import FirstTabScreen from './FirstTabScreen';
+import FirstTabScreen from './NewsListScreen';
 import SecondTabScreen from './SecondTabScreen';
-import PushedScreen from './PushedScreen';
+import PushedScreen from './NewsDetailScreen';
 import StyledScreen from './StyledScreen';
 import SideMenu from './SideMenu';
-import ModalScreen from './ModalScreen';
+import ModalScreen from './LoginScreen';
 import CollapsingTopBarScreen from './CollapsingTopBarScreen';
 import InAppNotification from './InAppNotification';
 

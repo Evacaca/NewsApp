@@ -11,7 +11,9 @@ import {
     ScrollView,
     AsyncStorage,
     RefreshControl,
-    DeviceEventEmitter
+    DeviceEventEmitter,
+    Animated,
+    Easing
 } from 'react-native';
 //引用组件
 import Slider from '../component/Slider';
@@ -55,9 +57,11 @@ export default class FirstTabScreen extends Component {
             status: false,
             subscribes: []
         }
+        this.spinValue = new Animated.Value(0);
     }
 
     componentDidMount() {
+        this.spinner();
         var that = this;
 
         fetch('http://www.qdaily.com/homes/articlemore/1490225388.json')
@@ -67,15 +71,18 @@ export default class FirstTabScreen extends Component {
                     rowData: responseJson.data.feeds
                 });
             });
-
-       // that.subscribes =  DeviceEventEmitter.addListener('user_subscribe', (user_subscribe) => {
-       //      that.setState({subscribes: user_subscribe.subscribes});
-       //      console.log(this.state.subscribes);
-       //  })
     }
-    // componentWillUnmount(){
-    //     this.subscribes.remove();
-    // }
+    spinner () {
+        this.spinValue.setValue(0)
+        Animated.timing(
+            this.spinValue,
+            {
+                toValue: 1,
+                duration: 2000,
+                easing: Easing.linear
+            }
+        ).start(() => this.spinner())
+    }
     onNavigatorEvent(event) {
 
         if (event.type == 'DeepLink') { //handle deep link
@@ -115,7 +122,7 @@ export default class FirstTabScreen extends Component {
             'http://img.qdaily.com/article/banner/20170320000232OyrY3HL5T6RMWuSB.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
             'http://img.qdaily.com/article/banner/20170323095136PzYgOsRUaATmB4Co.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1'];
 
-        if (!news) {        //加载页面内容
+        if (!news) {        //加载动画
             return this.renderLoadingView();
         }
 
@@ -123,13 +130,22 @@ export default class FirstTabScreen extends Component {
     }
 
     renderLoadingView() {   //加载数据
+        const spin = this.spinValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+        })
         return (
-            <View style={styles.flexContainer}>
-                <Text>
-                    Loading news...
-                </Text>
+            <View style={styles.container}>
+                <Text style={{color:'#A91503'}}>加载中...</Text>
+                <Animated.Image
+                    style={{
+                        width: 44,
+                        height: 44,
+                        transform: [{rotate: spin}] }}
+                    source={require('../img/loading.png')}
+                />
             </View>
-        );
+        )
     }
 
     renderNews(img_url, news, columnNews, status) {
@@ -233,7 +249,7 @@ export default class FirstTabScreen extends Component {
     onPushPress(pageID) {
         this.props.navigator.push({
             title: "新闻详情",
-            screen: "example.PushedScreen",
+            screen: "example.NewsDetailScreen",
             passProps: {id: pageID}
         });
     }
@@ -250,6 +266,12 @@ export default class FirstTabScreen extends Component {
 const styles = StyleSheet.create({
     flexContainer: {
         flex: 1
+    },
+    container: {
+        flex: 1,
+        marginTop: 200,
+        // justifyContent: 'center',
+        alignItems: 'center'
     },
     button: {
         textAlign: 'center',

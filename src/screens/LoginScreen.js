@@ -15,7 +15,7 @@ import {Container, Content, Form, Item, Input, Button} from 'native-base';
 
 const {width} = Dimensions.get('window');
 
-export default class ModalScreen extends Component {
+export default class LoginScreen extends Component {
     static navigatorButtons = {
         leftButtons: [{
             title: '关闭',

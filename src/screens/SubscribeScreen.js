@@ -32,7 +32,6 @@ export default class SubscribeScreen extends Component {
         this.state = {
             source: null,
             subscribes: [],
-            status: false,
             btnIsPress: true,
             _iconColor: '#A91503',
         }
@@ -105,13 +104,14 @@ export default class SubscribeScreen extends Component {
 
         AsyncStorage.getItem('USER_STATUS_INFO', function (err, result) {
             var curr_id = JSON.parse(result).account_ID;
-            // console.log(curr_id);
+            var status = JSON.parse(result).account_status;
+            console.log(curr_id);
 
-            if(!that.state.status){                                       //如果未登录，则进入登录界面
+            if(!status){                                       //如果未登录，则进入登录界面
                 that.props.navigator.pop();
                 that.props.navigator.showModal({
                     title: "登录",
-                    screen: "example.ModalScreen"
+                    screen: "example.LoginScreen"
                 });
             }
             else {
