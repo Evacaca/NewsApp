@@ -19,6 +19,7 @@ import {
 import Slider from '../component/Slider';
 import NewsCard from '../component/NewsCard';
 import ColumnCard from '../component/ColumnCard';
+import DataJson from '../api_server/news_db.json';
 //定义组件
 export default class FirstTabScreen extends Component {
     //导航设置
@@ -73,12 +74,12 @@ export default class FirstTabScreen extends Component {
             });
     }
     spinner () {
-        this.spinValue.setValue(0)
+        this.spinValue.setValue(0);
         Animated.timing(
             this.spinValue,
             {
                 toValue: 1,
-                duration: 2000,
+                duration: 1800,
                 easing: Easing.linear
             }
         ).start(() => this.spinner())
@@ -139,8 +140,8 @@ export default class FirstTabScreen extends Component {
                 <Text style={{color:'#A91503'}}>加载中...</Text>
                 <Animated.Image
                     style={{
-                        width: 44,
-                        height: 44,
+                        width: 40,
+                        height: 40,
                         transform: [{rotate: spin}] }}
                     source={require('../img/loading.png')}
                 />
@@ -206,9 +207,8 @@ export default class FirstTabScreen extends Component {
                     AsyncStorage.getItem('USER_DATA', (error, result) => {  //获取用户的订阅版块
                         var subscribes = JSON.parse(result).subscribe_id;
 
-                        fetch(url).then((response) => response.json())
-                            .then((responseJson) => {
-                                var subscribeNews = responseJson.data.columns;
+
+                                var subscribeNews = DataJson.data;
                                 var columnNews = [];
                                 for (var i in subscribes) {
                                     console.log(subscribeNews[subscribes[i]]);
@@ -225,7 +225,6 @@ export default class FirstTabScreen extends Component {
                                     columnData: columnNews
                                 });
                             })
-                    });
                 }
             }
         });
@@ -276,7 +275,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        marginTop: 200,
+        marginTop: 100,
         // justifyContent: 'center',
         alignItems: 'center'
     },

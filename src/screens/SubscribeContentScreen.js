@@ -10,6 +10,8 @@ import {
     Dimensions,
     ScrollView,
     RefreshControl,
+    Animated,
+    Easing
 } from 'react-native';
 //引用组件
 import NewsCard from '../component/NewsCard';
@@ -60,9 +62,11 @@ export default class SubscribeContentScreen extends Component {
             loaded: 10,
             rowData: null,
         }
+        this.spinValue = new Animated.Value(0);
     }
 
     componentDidMount() {
+        this.spinner();
         var that = this;
         var subscribe_url = url + `${this.props.id}` + '/'+ `${subscribe_id[this.props.id]}` + '.json'
 console.log(subscribe_url);
@@ -75,7 +79,17 @@ console.log(subscribe_url);
             });
     }
 
-
+    spinner () {
+        this.spinValue.setValue(0);
+        Animated.timing(
+            this.spinValue,
+            {
+                toValue: 1,
+                duration: 1800,
+                easing: Easing.linear
+            }
+        ).start(() => this.spinner())
+    }
     render() {
         var news = this.state.rowData;
 
@@ -87,13 +101,22 @@ console.log(subscribe_url);
     }
 
     renderLoadingView() {   //加载数据
+        const spin = this.spinValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+        })
         return (
-            <View style={styles.flexContainer}>
-                <Text>
-                    Loading news...
-                </Text>
+            <View style={styles.container}>
+                <Text style={{color:'#A91503'}}>加载中...</Text>
+                <Animated.Image
+                    style={{
+                        width: 40,
+                        height: 40,
+                        transform: [{rotate: spin}] }}
+                    source={require('../img/loading.png')}
+                />
             </View>
-        );
+        )
     }
 
     renderNews(news) {
@@ -161,6 +184,12 @@ console.log(subscribe_url);
 const styles = StyleSheet.create({
     flexContainer: {
         flex: 1
+    },
+    container: {
+        flex: 1,
+        marginTop: 100,
+        // justifyContent: 'center',
+        alignItems: 'center'
     },
     button: {
         textAlign: 'center',

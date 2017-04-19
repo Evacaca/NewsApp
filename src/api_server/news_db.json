@@ -1,6 +1,6 @@
 {
-  "data": {
-    "columns": [
+  "data":
+  [
       {
         "id": 29,
         "name": "为什么读书",
@@ -159,8 +159,8 @@
       },
       {
         "id": 17,
-        "name": "那些伟大的角色，他们闪闪发亮的时刻",
-        "description": "我们筛选值得一读的书，并提供一些书摘。",
+        "name": "这个人有好奇心",
+        "description": "那些伟大的角色，他们闪闪发亮的时刻",
         "subscribe_status": true,
         "image": "http://img.qdaily.com/special_column/column/201607031834320vTF7bYofxR45s13.jpg?imageMogr2/auto-orient/thumbnail/!368x240r/gravity/Center/crop/368x240/quality/85/format/webp/ignore-error/1",
         "content_provider": "好奇心日报",
@@ -264,20 +264,6 @@
         "genre": 1,
         "subscriber_num": 7719,
         "post_count": 11
-      },
-      {
-        "id": 42,
-        "name": " “双 11”洞察",
-        "description": "中国最重要的电商阿里巴巴的战略变化。",
-        "subscribe_status": true,
-        "icon": "http://img.qdaily.com/special_column/icon/20161122184513cjqW5CTRs31egzX2.png?imageMogr2/auto-orient/thumbnail/!128x128r/gravity/Center/crop/128x128/quality/85/format/jpg/ignore-error/1",
-        "image": "http://img.qdaily.com/special_column/column/20161123082450RHKwxiqmIVELJAZ0.jpg?imageMogr2/auto-orient/thumbnail/!245x160r/gravity/Center/crop/245x160/quality/85/format/jpg/ignore-error/1",
-        "image_large": "http://img.qdaily.com/special_column/column/20161123082450RHKwxiqmIVELJAZ0.jpg?imageMogr2/auto-orient/thumbnail/!450x240r/gravity/Center/crop/450x240/quality/85/format/jpg/ignore-error/1",
-        "content_provider": "好奇心日报",
-        "show_type": 1,
-        "genre": 1,
-        "subscriber_num": 3261,
-        "post_count": 12
       },
       {
         "id": 6,
@@ -405,10 +391,5 @@
         "subscriber_num": 3861,
         "post_count": 18
       }
-    ],
-    "last_key": null,
-    "has_more": false
-  },
-  "status": true,
-  "message": ""
+    ]
 }

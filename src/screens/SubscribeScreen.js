@@ -6,11 +6,14 @@ import {
     TouchableOpacity,
     StyleSheet,
     AsyncStorage,
-    DeviceEventEmitter
+    DeviceEventEmitter,
+    Animated,
+    Easing
 } from 'react-native';
 
 import { Image } from 'react-native';
 import SubscribeCard from '../component/SubscribeCard';
+import DataJson from '../api_server/news_db.json';
 
 export default class SubscribeScreen extends Component {
     static navigatorButtons = {
@@ -32,22 +35,29 @@ export default class SubscribeScreen extends Component {
         this.state = {
             source: null,
             subscribes: [],
-            btnIsPress: true,
-            _iconColor: '#A91503',
         }
+        this.spinValue = new Animated.Value(0);
     }
 
     componentDidMount() {
-        var that = this;
-        fetch('http://www.qdaily.com/special_columns/column_more/1487916735.json').
-        then((response) => response.json()).
-        then((responseJson) => {
-            that.setState({
-                source: responseJson.data.columns
-            });
+        this.spinner();
+        // console.log(DataJson.data.length);
+        this.setState({
+            source: DataJson.data
         });
     }
 
+    spinner () {
+        this.spinValue.setValue(0)
+        Animated.timing(
+            this.spinValue,
+            {
+                toValue: 1,
+                duration: 1800,
+                easing: Easing.linear
+            }
+        ).start(() => this.spinner())
+    }
     render() {
         var newsColumns = this.state.source;
 
@@ -58,13 +68,22 @@ export default class SubscribeScreen extends Component {
     }
 
     renderLoadingView() {
+        const spin = this.spinValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+        })
         return (
-            <View style={styles.flexContainer}>
-                <Text>
-                    Loading ...
-                </Text>
+            <View style={styles.loadContainer}>
+                <Text style={{color:'#A91503'}}>加载中...</Text>
+                <Animated.Image
+                    style={{
+                        width: 40,
+                        height: 40,
+                        transform: [{rotate: spin}] }}
+                    source={require('../img/loading.png')}
+                />
             </View>
-        );
+        )
     }
 
     renderColumns(newsColumns) {
@@ -93,12 +112,23 @@ export default class SubscribeScreen extends Component {
             this.props.navigator.pop();
         }
     }
-    onChangeSubscribeState(btnIsPress, _iconColor){  //@TODO
-        this.setState = {
-            btnIsPress: btnIsPress,
-            _iconColor: _iconColor,
+
+    isContain(arr, element){   //判断数组重复
+        var i = arr.length;
+        while(i --){
+            if(arr[i] == element){
+
+                arr.splice(i,1);  //删除重复的数组元素
+                this.props.navigator.showInAppNotification({
+                    screen: "example.NotificationScreen",
+                    passProps: {note: this.state.source[element].name, message: '您已取消订阅'}
+                });
+                return false;
+            }
         }
+        return true;
     }
+
     onSubscribePress(subscribe){                                //点击订阅
         var that = this;
 
@@ -132,11 +162,21 @@ export default class SubscribeScreen extends Component {
                     }
                     else {                                            //当前用户已经有订阅版块
                         var arr_id = JSON.parse(result).subscribe_id;
-                        arr_id.push(subscribe);
+                        // arr_id.push(subscribe);
+
+                        if(that.isContain(arr_id, subscribe)){
+                            arr_id.push(subscribe);
+                            that.props.navigator.showInAppNotification({
+                                screen: "example.NotificationScreen",
+                                passProps: {note: that.state.source[subscribe].name, message: '您已成功订阅了'}
+                            });
+                        }
+                        else console.log(arr_id);
+
                         USERDATA.subscribe_id = arr_id;
 
                         that.setState({                                //设置用户订阅版块列表
-                            subscribes: arr_id
+                            subscribes: arr_id,
                         });
 
                         AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA), () => {
@@ -157,6 +197,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10
+    },
+    loadContainer: {
+        flex: 1,
+        marginTop: 100,
+        // justifyContent: 'center',
+        alignItems: 'center'
     },
     button: {
         textAlign: 'center',

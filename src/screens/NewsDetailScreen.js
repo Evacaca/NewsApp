@@ -24,10 +24,10 @@ export default class NewsDetailScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-      marginLeft: 14,
-      marginRight: 14,
-    backgroundColor: 'white'
-  }
+    container: {
+        flex: 1,
+        marginLeft: 14,
+        marginRight: 14,
+        backgroundColor: 'white'
+    }
 });
