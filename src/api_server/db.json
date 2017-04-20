@@ -30,5 +30,22 @@
       "id": 5,
       "login_status": false
     }
-    ]
+  ],
+  "user_data": [
+    {
+      "user_id": 5,
+      "subscribe_id": [
+        0
+      ],
+      "id": 2
+    },
+    {
+      "user_id": 4,
+      "subscribe_id": [
+        2,
+        1
+      ],
+      "id": 3
+    }
+  ]
 }

@@ -105,8 +105,25 @@ export default class LoginScreen extends Component {
         });
     }
 
-    onLoginIn(){
-        this.props.navigator.dismissModal();
+    onLoginIn(id){
+        fetch("http://localhost:3000/user_data", {method: 'get'}) //获得用户订阅信息
+            .then((response) => response.json()).then((responseJson) => {
+            console.log(id);
+            for(var i in responseJson){
+                if(responseJson[i].user_id == id){
+                    let USERDATA = {
+                        'user_id': responseJson[i].user_id,
+                        'subscribe_id': responseJson[i].subscribe_id,
+                    };
+                    AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA));
+                    AsyncStorage.getItem('USER_DATA', (error, result) => {
+                        console.log(result);
+                    })
+                    return;
+                }
+            }
+        });
+        this.props.navigator.dismissModal();//进入首页
     }
     onPressCallback () {
 
@@ -129,16 +146,15 @@ export default class LoginScreen extends Component {
                         let USERSTATUSINFO = {
                             'account_email':responseJson[i].user_email,
                             'account_ID': responseJson[i].id,
-                            'account_status': true
+                            'account_status': true,
+                            'isFirst': true,
                         }
                         // AsyncStorage.removeItem('USER_STATUS_INFO');
                         AsyncStorage.setItem('USER_STATUS_INFO', JSON.stringify(USERSTATUSINFO));
                         //登录成功，回到首页
                         DeviceEventEmitter.emit('user_status',{'status': true});
-                        // AsyncStorage.getItem('USER_STATUS_INFO', (error, result) => {
-                        //     console.log(result);
-                        // })
-                        this.onLoginIn();
+
+                        this.onLoginIn(USERSTATUSINFO.account_ID);
                         return;
                     }
                     return this.onLightBoxPress('密码错误！');

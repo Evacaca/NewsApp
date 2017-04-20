@@ -28,6 +28,7 @@ export default class SubscribeScreen extends Component {
         navBarButtonColor: '#ffffff',
         statusBarTextColorScheme: 'light',
     };
+
     constructor(props) {
         super(props);
         this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
@@ -117,16 +118,10 @@ export default class SubscribeScreen extends Component {
         var i = arr.length;
         while(i --){
             if(arr[i] == element){
-
-                arr.splice(i,1);  //删除重复的数组元素
-                this.props.navigator.showInAppNotification({
-                    screen: "example.NotificationScreen",
-                    passProps: {note: this.state.source[element].name, message: '您已取消订阅'}
-                });
-                return false;
+                return {'isInclude':false, 'index':i};
             }
         }
-        return true;
+        return {'isInclude':true, 'index':i};
     }
 
     onSubscribePress(subscribe){                                //点击订阅
@@ -134,7 +129,10 @@ export default class SubscribeScreen extends Component {
 
         AsyncStorage.getItem('USER_STATUS_INFO', function (err, result) {
             var resultJson = JSON.parse(result);
-            if(!resultJson){                                   //未登录，进入登录界面
+
+            var isFirst = resultJson.isFirst;
+
+            if(!resultJson.account_status){                                   //未登录，进入登录界面
                 that.props.navigator.pop();
                 that.props.navigator.showModal({
                     title: "登录",
@@ -142,40 +140,88 @@ export default class SubscribeScreen extends Component {
                 });
             }
             else {
-                var curr_id = JSON.parse(result).account_ID;
-                console.log(curr_id);
+                var curr_id = resultJson.account_ID;
 
                 let USERDATA = {
                     'user_id': curr_id,
                     'subscribe_id': [subscribe],
                 };
 
-                // AsyncStorage.removeItem('USER_DATA');
+                if (isFirst) {   //登录后第一次点击
+                    console.log(1111);
+                    fetch('http://localhost:3000/user_data', {method: 'get'})
+                        .then((response) => response.json()).then((responseJson) => {
+                        if (!responseJson) {
+                            return;
+                        }  //用户还没有订阅栏目
+                        else {
+                            for (var i in responseJson) {
+                                if (responseJson[i].user_id == curr_id) {
+                                    USERDATA.subscribe_id = responseJson[i].subscribe_id;
+
+                                    if (that.isContain(USERDATA.subscribe_id, subscribe).isInclude) {
+                                        USERDATA.subscribe_id.push(subscribe);
+                                        that.props.navigator.showInAppNotification({
+                                            screen: "example.NotificationScreen",
+                                            passProps: {note: that.state.source[subscribe].name, message: '您已成功订阅了'}
+                                        });
+                                    }
+                                    else {
+
+                                        USERDATA.subscribe_id.splice(that.isContain(USERDATA.subscribe_id, subscribe).index, 1);  //删除重复的数组元素
+                                        that.props.navigator.showInAppNotification({
+                                            screen: "example.NotificationScreen",
+                                            passProps: {note: that.state.source[subscribe].name, message: '您已取消订阅'}
+                                        });
+                                    }
+
+                                    AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA));
+                                    return;
+                                }
+                            }
+                        }
+                    });
+                    let USERSTATUSINFO = {
+                        'account_email': resultJson.account_email,
+                        'account_status': resultJson.account_status,
+                        'account_ID': resultJson.account_ID,
+                        'isFirst': false,
+                    }
+                    AsyncStorage.setItem('USER_STATUS_INFO', JSON.stringify(USERSTATUSINFO));
+                }
+
 
                 //存储当前用户的订阅ID
-                AsyncStorage.getItem('USER_DATA', (error, result) => {//当前用户还未有订阅
-                    if (!result) {
+                AsyncStorage.getItem('USER_DATA', (error, result) => {
+                    if(!result){
                         AsyncStorage.setItem('USER_DATA', JSON.stringify(USERDATA));
-                        AsyncStorage.getItem('USER_DATA', (error, result) => {
-                            console.log("test3: " + result);
+                        that.props.navigator.showInAppNotification({
+                            screen: "example.NotificationScreen",
+                            passProps: {note: that.state.source[subscribe].name, message: '您已成功订阅了'}
                         });
                     }
-                    else {                                            //当前用户已经有订阅版块
-                        var arr_id = JSON.parse(result).subscribe_id;
-                        // arr_id.push(subscribe);
+                    else {
+                        var responseJson = JSON.parse(result);
+                        var arr_id = responseJson.subscribe_id;
 
-                        if(that.isContain(arr_id, subscribe)){
+                        if (that.isContain(arr_id, subscribe).isInclude) {
                             arr_id.push(subscribe);
                             that.props.navigator.showInAppNotification({
                                 screen: "example.NotificationScreen",
                                 passProps: {note: that.state.source[subscribe].name, message: '您已成功订阅了'}
                             });
                         }
-                        else console.log(arr_id);
+                        else{
+                            arr_id.splice(that.isContain(arr_id, subscribe).index,1);  //删除重复的数组元素
+                            that.props.navigator.showInAppNotification({
+                                screen: "example.NotificationScreen",
+                                passProps: {note: that.state.source[subscribe].name, message: '您已取消订阅'}
+                            });
+                        }
 
                         USERDATA.subscribe_id = arr_id;
 
-                        that.setState({                                //设置用户订阅版块列表
+                        that.setState({                                               //设置用户订阅版块列表
                             subscribes: arr_id,
                         });
 
@@ -185,6 +231,7 @@ export default class SubscribeScreen extends Component {
                             });
                         });
                     }
+
                 });
 
             }
@@ -201,7 +248,6 @@ const styles = StyleSheet.create({
     loadContainer: {
         flex: 1,
         marginTop: 100,
-        // justifyContent: 'center',
         alignItems: 'center'
     },
     button: {

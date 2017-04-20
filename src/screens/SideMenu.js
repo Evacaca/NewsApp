@@ -13,6 +13,7 @@ import {
 
 import {Container, Content, ListItem, Right} from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
+import NetUtil from '../util/NetUtil';
 
 export default class SideMenu extends Component {
     constructor(props) {
@@ -118,22 +119,49 @@ export default class SideMenu extends Component {
             link: "SideMenu/example.NewsListScreen",
         });
 
-        // DeviceEventEmitter.emit('user_subscribe', ({ 'subscribes': []}));
-
         if(this.state.user_status){
             let USERSTATUSINFO = {
-                account_email: '',
-                account_status: false,
-                account_ID: ''
+                'account_email': '',
+                'account_status': false,
+                'account_ID': '',
+                'isFirst': true,
             }
             AsyncStorage.setItem('USER_STATUS_INFO', JSON.stringify(USERSTATUSINFO));
+
             this.setState({
                 user_email: '登录',
                 user_status: false
             });
+            AsyncStorage.getItem('USER_DATA', (error, result) => {    //记录
+                if(!result){
+                    return;
+                }
+                else {
+                    var resultData = JSON.parse(result);
+
+                    fetch('http://localhost:3000/user_data', {method: 'get'})
+                        .then((response) => response.json()).then((responseJson) => {
+                        for(var i in responseJson){    //先找到当前用户的订阅信息
+                            if(responseJson[i].user_id == resultData.user_id){
+                                var item = responseJson[i].id;
+                                                        //将订阅信息删除
+                                fetch('http://localhost:3000/user_data/'+`${item}`, {method: 'delete'})
+                                    .then((response) => response.json()).then((responseJson) => {
+                                });
+                                return;
+                            }
+                        }
+                    });
+                                                        //重新写入订阅信息
+                    NetUtil.postJson('http://localhost:3000/user_data', resultData, (responseJson) => {
+                        console.log(responseJson);
+                    });
+                }
+            });
+            AsyncStorage.removeItem('USER_DATA');  //清除
 
         }
-        // this.props.navigator.pop();
+
 
     }
 }

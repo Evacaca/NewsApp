@@ -203,28 +203,34 @@ export default class FirstTabScreen extends Component {
 
                 if (curr_status) {
                     // console.log(curr_status);
+                    var curr_id = resultJson.account_ID;
                     url = "http://www.qdaily.com/special_columns/column_more/1487916735.json";
                     AsyncStorage.getItem('USER_DATA', (error, result) => {  //获取用户的订阅版块
-                        var subscribes = JSON.parse(result).subscribe_id;
+                        var reponseJson = JSON.parse(result);
 
+                        if(reponseJson.user_id == curr_id) {
+                            var subscribes = reponseJson.subscribe_id;
 
-                                var subscribeNews = DataJson.data;
-                                var columnNews = [];
-                                for (var i in subscribes) {
-                                    console.log(subscribeNews[subscribes[i]]);
-                                    columnNews.push(subscribeNews[subscribes[i]]);
-                                }
-                                // @TODO
-                                if (subscribes.length % 2 != 0) {    //每次同时渲染两个，所以需要控制偶数
+                            var subscribeNews = DataJson.data;
+                            var columnNews = [];
+                            for (var i in subscribes) {
+                                console.log(subscribeNews[subscribes[i]]);
+                                columnNews.push(subscribeNews[subscribes[i]]);
+                            }
+                            // @TODO
+                            if (subscribes.length % 2 != 0) {    //每次同时渲染两个，所以需要控制偶数
 
-                                    console.log(subscribes[subscribes.length - 1]);
-                                    columnNews.push(subscribeNews[subscribes.length - 1]);
-                                }
-                                this.setState({
-                                    status: true,
-                                    columnData: columnNews
-                                });
-                            })
+                                console.log(subscribes[subscribes.length - 1]);
+                                columnNews.push(subscribeNews[subscribes.length - 1]);
+                            }
+                            this.setState({
+                                status: true,
+                                columnData: columnNews
+                            });
+                        }
+                        else return;
+                    });
+
                 }
             }
         });
