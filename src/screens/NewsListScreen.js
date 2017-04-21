@@ -21,6 +21,9 @@ import NewsCard from '../component/NewsCard';
 import ColumnCard from '../component/ColumnCard';
 import DataJson from '../api_server/news_db.json';
 //定义组件
+
+let bannerURL = [39853, 39670, 39954, 39894];
+
 export default class FirstTabScreen extends Component {
     //导航设置
     static navigatorButtons = {
@@ -119,9 +122,10 @@ export default class FirstTabScreen extends Component {
     render() {
         var news = this.state.rowData;
         var columnNews = this.state.columnData;
-        var img_url = ['http://img.qdaily.com/article/banner/20170322013702HD2XZToMq5G7m3Qy.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
-            'http://img.qdaily.com/article/banner/20170320000232OyrY3HL5T6RMWuSB.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
-            'http://img.qdaily.com/article/banner/20170323095136PzYgOsRUaATmB4Co.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1'];
+        var img_url = ['http://img.qdaily.com/article/banner/20170419071502kUYteDqGxuIdS4pL.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
+            'http://img.qdaily.com/article/banner/20170411155200vhFjsN9d7T3xAq6D.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
+            'http://img.qdaily.com/article/banner/20170419142951kcsvbjlntgJPhWxY.jpeg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1',
+        'http://img.qdaily.com/article/banner/20170418145204iE6XP7JrgFT4YM8Z.jpg?imageMogr2/auto-orient/thumbnail/!640x360r/gravity/Center/crop/640x360/quality/85/format/jpg/ignore-error/1'];
 
         if (!news) {        //加载动画
             return this.renderLoadingView();
@@ -180,9 +184,7 @@ export default class FirstTabScreen extends Component {
                     tintColor='#A91503'
                     title= {this.state.isRefreshing? '加载中...':'下拉刷新'}/>
             }>
-                <Slider img_one={img_url[0]}
-                        img_sec={img_url[1]}
-                        img_third={img_url[2]}/>
+                <Slider img={img_url} click={() => this.onPushPress(bannerURL[0])}/>
                 {columnRows}
                 {rows}
             </ScrollView>
@@ -264,6 +266,7 @@ export default class FirstTabScreen extends Component {
             screen: "example.NewsDetailScreen",
             passProps: {id: pageID}
         });
+        console.log('天天天天天体');
     }
 
     onPushContent(navTitle, subscribeID){
@@ -272,6 +275,15 @@ export default class FirstTabScreen extends Component {
             screen: 'example.SubscribeContentScreen',
             passProps: {id: subscribeID}
         })
+    }
+
+    onPushBannerContent(pageID){
+        this.props.navigator.push({
+            title: '新闻详情',
+            screen: 'example.NewsDetailScreen',
+            passProps: {id: pageID}
+        })
+        console.log(222222222);
     }
 }
 //定义样式

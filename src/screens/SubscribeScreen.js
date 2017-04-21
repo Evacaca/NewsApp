@@ -43,9 +43,13 @@ export default class SubscribeScreen extends Component {
     componentDidMount() {
         this.spinner();
         // console.log(DataJson.data.length);
-        this.setState({
-            source: DataJson.data
-        });
+        fetch('http://localhost:3005/data', {method: 'get'})
+            .then((response) => response.json()).then((responseJson) => {
+            this.setState({
+                source: responseJson
+            });
+        })
+
     }
 
     spinner () {
@@ -61,7 +65,7 @@ export default class SubscribeScreen extends Component {
     }
     render() {
         var newsColumns = this.state.source;
-
+        console.log(newsColumns);
         if (!newsColumns) {
             return this.renderLoadingView();
         }
@@ -93,7 +97,7 @@ export default class SubscribeScreen extends Component {
             var j = 2*ii+1;
             if(j>newsColumns.length) return;
 
-            return <SubscribeCard key={i} source={newsColumns[i]}
+            return <SubscribeCard key={i} source={newsColumns[i]} i={i} j={j}
                                   sourceSecond={newsColumns[j]}
                                   click={()=>this.onSubscribePress(i)}
                                   clickSecond={()=>this.onSubscribePress(j)}/>
