@@ -69,9 +69,6 @@ export default class LoginScreen extends Component {
                                                   onPress={ this.onRegisterPress.bind(this) }>
                                     <Text style={styles.text}>注册</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={[styles.loginItem, styles.textRight]}>
-                                    <Text style={styles.text}>忘记密码</Text>
-                                </TouchableOpacity>
                             </View>
                         </Content>
                     </Container>
@@ -131,8 +128,7 @@ export default class LoginScreen extends Component {
         var pwd = this.state.password.trim();
 
         if(email=='' || pwd==''){
-            console.log("邮箱和密码不能为空");
-            return;
+            return this.onLightBoxPress("邮箱和密码不能为空");
         }
 
         fetch('http://localhost:3000/user').
@@ -157,6 +153,7 @@ export default class LoginScreen extends Component {
                         this.onLoginIn(USERSTATUSINFO.account_ID);
                         return;
                     }
+
                     return this.onLightBoxPress('密码错误！');
 
                 }

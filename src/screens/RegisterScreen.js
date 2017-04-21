@@ -82,9 +82,6 @@ export default class ModalScreen extends Component {
                                                   onPress={ this.onLoginPress.bind(this) }>
                                     <Text style={styles.text}>已有账户</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={[styles.loginItem, styles.textRight]}>
-                                    <Text style={styles.text}>忘记密码</Text>
-                                </TouchableOpacity>
                             </View>
                         </Content>
                     </Container>
@@ -102,7 +99,7 @@ export default class ModalScreen extends Component {
     onLoginPress() {
         this.props.navigator.push({
             title: "登录",
-            screen: "example.ModalScreen"
+            screen: "example.LoginScreen"
         });
     }
     onClosePress() {
@@ -141,10 +138,19 @@ export default class ModalScreen extends Component {
             'login_status': false,
         };
         let url = "http://localhost:3000/user";
-        NetUtil.postJson(url,data,(responseJson) => {
-            // alert(responseJson.user_email);
+        fetch(url, {method: 'get'}).then((response) => response.json()).then((responseJson) => {
+            console.log(2222222222);
+            for(var i in responseJson){
+
+                if(data.user_email == responseJson[i].user_email){
+                    return this.onLightBoxPress("邮箱已存在");
+                }
+            }
+            NetUtil.postJson(url,data,(responseJson) => {
+                // alert(responseJson.user_email);
+            });
+            this.props.navigator.dismissModal();
         });
-        this.props.navigator.dismissModal();
     }
     onLightBoxPress(message) {
         this.props.navigator.showLightBox({

@@ -117,6 +117,12 @@ export default class FirstTabScreen extends Component {
                 });
             });
         }
+        if(event.id === 'add'){
+            this.props.navigator.showModal({
+                title: "订阅",
+                screen: "example.SubScribeScreen"
+            });
+        }
     }
 
     render() {
@@ -209,7 +215,9 @@ export default class FirstTabScreen extends Component {
                     url = "http://www.qdaily.com/special_columns/column_more/1487916735.json";
                     AsyncStorage.getItem('USER_DATA', (error, result) => {  //获取用户的订阅版块
                         var reponseJson = JSON.parse(result);
-
+                        if(!reponseJson){
+                            return;
+                        }
                         if(reponseJson.user_id == curr_id) {
                             var subscribes = reponseJson.subscribe_id;
 
@@ -266,7 +274,6 @@ export default class FirstTabScreen extends Component {
             screen: "example.NewsDetailScreen",
             passProps: {id: pageID}
         });
-        console.log('天天天天天体');
     }
 
     onPushContent(navTitle, subscribeID){
@@ -274,16 +281,7 @@ export default class FirstTabScreen extends Component {
             title: `${navTitle}`,
             screen: 'example.SubscribeContentScreen',
             passProps: {id: subscribeID}
-        })
-    }
-
-    onPushBannerContent(pageID){
-        this.props.navigator.push({
-            title: '新闻详情',
-            screen: 'example.NewsDetailScreen',
-            passProps: {id: pageID}
-        })
-        console.log(222222222);
+        });
     }
 }
 //定义样式
